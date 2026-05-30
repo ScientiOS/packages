@@ -65,10 +65,17 @@ jobs:
       - name: Sign packages and generate index
         run: |
           REPO_DIR="void-packages/hostdir/binpkgs"
-          # Sign all built .xbps files
-          xbps-rindex --sign-pkg --privkey privkey.pem $REPO_DIR/*.xbps
-          # Sign the repository metadata
-          xbps-rindex --sign --signedby "ScientiOS" --privkey privkey.pem $REPO_DIR
+          # Sign all built .xbps files recursively
+          find $REPO_DIR -name "*.xbps" -exec xbps-rindex --sign-pkg --privkey privkey.pem {} +
+          
+          # Sign the repository metadata for the main repo and any sub-repos (like nonfree)
+          for dir in $(find $REPO_DIR -type d); do
+            # Only generate index if there are .xbps files in this specific directory
+            if ls $dir/*.xbps 1> /dev/null 2>&1; then
+              xbps-rindex --sign --signedby "ScientiOS" --privkey privkey.pem $dir
+            fi
+          done
+          
           # Clean up the key
           rm -f privkey.pem
 

@@ -85,6 +85,13 @@ repository's signing key and add the repository URL to your XBPS configuration.
    echo "repository=https://scientios.github.io/packages/" | sudo tee /etc/xbps.d/10-scientios.conf
    ```
 
+   _If you want to install restricted/proprietary packages (like Slack), you
+   also need to add the `nonfree` repository:_
+
+   ```bash
+   echo "repository=https://scientios.github.io/packages/nonfree/" | sudo tee /etc/xbps.d/10-scientios-nonfree.conf
+   ```
+
 3. **Install Packages:** Update your repository index and install the software:
    ```bash
    sudo xbps-install -S

@@ -29,14 +29,14 @@ jobs:
         run: git clone --depth 1 https://github.com/void-linux/void-packages.git void-packages
 
       - name: Bootstrap xbps-src
-        working-directory: void-packages
+        working-directory: ${{ github.workspace }}/void-packages
         run: ./xbps-src binary-bootstrap
 
       - name: Inject custom packages
         run: cp -r scientios-repo/srcpkgs/* void-packages/srcpkgs/
 
       - name: Build custom packages
-        working-directory: void-packages
+        working-directory: ${{ github.workspace }}/void-packages
         run: |
           for pkg in ../scientios-repo/srcpkgs/*/; do
             pkgname=$(basename "$pkg")

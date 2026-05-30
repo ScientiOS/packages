@@ -41,6 +41,7 @@ jobs:
       - name: Bootstrap xbps-src
         run: |
           cd void-packages
+          echo "XBPS_CHROOT_CMD=uchroot" >> etc/conf
           sudo -Eu builder ./xbps-src binary-bootstrap
 
       - name: Inject custom packages

@@ -21,22 +21,27 @@ jobs:
         - /dev:/dev
 
     steps:
+      - name: Prepare container
+        run: |
+          xbps-install -Syu xbps
+          xbps-install -yu
+          xbps-install -y sudo bash grep curl git openssl xz
+          useradd -G xbuilder -M builder
+
       - name: Checkout custom packages
         uses: actions/checkout@v4
         with:
           path: "scientios-repo"
 
-      - name: Prepare container
-        run: xbps-install -Syu && xbps-install -y git openssl xz
-
       - name: Clone void-packages
-        run: git clone --depth 1 https://github.com/void-linux/void-packages.git void-packages
+        run: |
+          git clone --depth 1 https://github.com/void-linux/void-packages.git void-packages
+          chown -R builder:builder void-packages
 
       - name: Bootstrap xbps-src
         run: |
-          chown -R root:root void-packages
           cd void-packages
-          ./xbps-src binary-bootstrap
+          sudo -Eu builder ./xbps-src binary-bootstrap
 
       - name: Inject custom packages
         run: cp -r scientios-repo/srcpkgs/* void-packages/srcpkgs/
@@ -47,7 +52,7 @@ jobs:
           for pkg in ../scientios-repo/srcpkgs/*/; do
             pkgname=$(basename "$pkg")
             echo "Building $pkgname..."
-            ./xbps-src -A x86_64 pkg "$pkgname"
+            sudo -Eu builder ./xbps-src -A x86_64 pkg "$pkgname"
           done
 
       - name: Setup Private Key

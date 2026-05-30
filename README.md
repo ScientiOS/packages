@@ -67,12 +67,26 @@ This repository implements an automated pipeline that:
 
 ## Usage
 
-To use this custom repository on your Void Linux machine, create a repository
-configuration file at `/etc/xbps.d/scientios.conf`:
+To use this custom repository on your Void Linux machine, you must trust the
+repository's signing key and add the repository URL to your XBPS configuration.
 
-```ini
-repository=https://packages.scientios.org/
-```
+1. **Add the Public Key:** Download the repository's public key to your XBPS
+   keys directory. Ensure the file is named to match the repository domain
+   (e.g., `scientios.github.io.plist`):
 
-_Note: Ensure you have added the corresponding public key to
-`/var/db/xbps/keys/` to verify package signatures._
+   ```bash
+   sudo curl -Lo /var/db/xbps/keys/scientios.github.io.plist https://raw.githubusercontent.com/ScientiOS/packages/main/pubkey.pem
+   ```
+
+2. **Configure the Repository:** Create a configuration file telling XBPS where
+   to find the packages:
+
+   ```bash
+   echo "repository=https://scientios.github.io/packages/" | sudo tee /etc/xbps.d/10-scientios.conf
+   ```
+
+3. **Install Packages:** Update your repository index and install the software:
+   ```bash
+   sudo xbps-install -S
+   sudo xbps-install -y distrobox
+   ```

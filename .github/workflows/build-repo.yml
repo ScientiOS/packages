@@ -1,0 +1,76 @@
+name: Build and Publish XBPS Repository
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Give the Action permission to deploy to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/void-linux/void-glibc-full:latest
+
+    steps:
+      - name: Checkout custom packages
+        uses: actions/checkout@v4
+        with:
+          path: "scientios-repo"
+
+      - name: Install dependencies
+        run: xbps-install -Sy git openssl xz
+
+      - name: Clone void-packages
+        run: git clone --depth 1 https://github.com/void-linux/void-packages.git void-packages
+
+      - name: Bootstrap xbps-src
+        working-directory: void-packages
+        run: ./xbps-src binary-bootstrap
+
+      - name: Inject custom packages
+        run: cp -r scientios-repo/srcpkgs/* void-packages/srcpkgs/
+
+      - name: Build custom packages
+        working-directory: void-packages
+        run: |
+          for pkg in ../scientios-repo/srcpkgs/*/; do
+            pkgname=$(basename "$pkg")
+            echo "Building $pkgname..."
+            ./xbps-src -A x86_64 pkg "$pkgname"
+          done
+
+      - name: Setup Private Key
+        run: |
+          echo "${{ secrets.XBPS_PRIVATE_KEY }}" > privkey.pem
+          chmod 600 privkey.pem
+
+      - name: Sign packages and generate index
+        run: |
+          REPO_DIR="void-packages/hostdir/binpkgs"
+          # Sign all built .xbps files
+          xbps-rindex --sign-pkg --privkey privkey.pem $REPO_DIR/*.xbps
+          # Sign the repository metadata
+          xbps-rindex --sign --signedby "ScientiOS" --privkey privkey.pem $REPO_DIR
+          # Clean up the key
+          rm -f privkey.pem
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "void-packages/hostdir/binpkgs"
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

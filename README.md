@@ -14,6 +14,11 @@ available in the official [Void Linux](https://voidlinux.org/) repositories.
 - **Automated CI/CD**: Packages are automatically built, signed, and published
   via CI/CD pipelines whenever changes are pushed to this repository.
 
+## Documentation
+
+For a complete list of available packages and detailed information on each,
+please check out the [Wiki](docs/wiki/).
+
 ## Local Development
 
 To build these packages locally on a Void Linux system, you do not need to clone

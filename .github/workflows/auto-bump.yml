@@ -1,0 +1,48 @@
+name: Auto-Bump Packages
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Run at 2 AM UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.set-matrix.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        run: |
+          PKGS=$(find srcpkgs -maxdepth 2 -name "update" -exec dirname {} \; | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')
+          echo "packages=$PKGS" >> $GITHUB_OUTPUT
+
+  bump:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.discover.outputs.packages) }}
+        
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run bump script
+        id: bump
+        run: |
+          ./scripts/bump-pkg.sh ${{ matrix.package }}
+          
+      - name: Create Pull Request
+        if: env.BUMPED == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: "bump/${{ matrix.package }}"
+          title: "Update ${{ matrix.package }} to ${{ env.NEW_VERSION }}"
+          commit-message: "${{ matrix.package }}: update to ${{ env.NEW_VERSION }}"
+          body: "Automated version bump for `${{ matrix.package }}`."
+          delete-branch: true

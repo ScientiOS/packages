@@ -1,7 +1,7 @@
 # Template file for 'zen-browser'
 pkgname=zen-browser
 version=1.21.3b
-revision=1
+revision=2
 archs="x86_64"
 short_desc="Zen Browser - Beautiful, fast, private"
 maintainer="ScientiOS <admin@scientios.local>"
@@ -28,7 +28,7 @@ do_install() {
 [Desktop Entry]
 Name=Zen Browser
 Comment=Beautiful, fast, private browser
-Exec=/usr/bin/zen-browser %u
+Exec=/usr/lib/zen-browser/zen %u
 Icon=zen-browser
 Terminal=false
 Type=Application

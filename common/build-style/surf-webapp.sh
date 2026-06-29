@@ -33,7 +33,7 @@ do_install() {
 	local wrapper_path="usr/libexec/surf-apps/${app_id}"
 
 	cat <<'EOF' > "${DESTDIR}/${wrapper_path}"
-#!/bin/bash
+#!/bin/sh
 
 # --- PHASE 1: LINK INTERCEPTION ---
 if [ "$#" -gt 0 ]; then
@@ -90,9 +90,18 @@ export XDG_DATA_HOME="$ISOLATED_DATA"
 export XDG_CACHE_HOME="$ISOLATED_CACHE"
 export XDG_CONFIG_HOME="$ISOLATED_CONFIG"
 
-# We must use bash's 'exec -a' directly instead of routing through 'env',
-# because 'env' does not preserve the argv[0] override.
-exec -a "$0" surf -c "$PROFILE_DIR/cookies.txt" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"
+# We dynamically use bash or zsh to access the 'exec -a' built-in.
+# This avoids a hard dependency on any specific shell while preserving
+# the ability to intercept links (which requires spoofing argv[0]).
+if command -v bash >/dev/null 2>&1; then
+	exec bash -c 'exec -a "$0" surf -c "$1" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"' "$0" "$PROFILE_DIR/cookies.txt"
+elif command -v zsh >/dev/null 2>&1; then
+	exec zsh -c 'exec -a "$0" surf -c "$1" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"' "$0" "$PROFILE_DIR/cookies.txt"
+else
+	# Fallback if neither bash nor zsh is found. Link interception will fail,
+	# but the webapp itself will still launch and remain isolated.
+	exec surf -c "$PROFILE_DIR/cookies.txt" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"
+fi
 EOF
 
 	# Replace placeholders in the wrapper

@@ -1,0 +1,8 @@
+:root {
+    font-size: 105% !important;
+}
+
+body, div, span, p, a {
+    font-size: 1.005em !important;
+    font-weight: inherit !important;
+}

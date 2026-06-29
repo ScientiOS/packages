@@ -65,10 +65,10 @@ ISOLATED_DATA="$PROFILE_DIR/data"
 ISOLATED_CACHE="$PROFILE_DIR/cache"
 ISOLATED_CONFIG="$PROFILE_DIR/config"
 
-mkdir -p "$ISOLATED_DATA" "$ISOLATED_CACHE" "$ISOLATED_CONFIG/surf/styles"
+mkdir -p "$ISOLATED_DATA" "$ISOLATED_CACHE" "$ISOLATED_CONFIG/.surf/styles"
 
 STYLE_SRC="/usr/share/surf-apps/APP_ID_PLACEHOLDER/user.css"
-STYLE_DEST="$ISOLATED_CONFIG/surf/styles/default.css"
+STYLE_DEST="$ISOLATED_CONFIG/.surf/styles/default.css"
 
 if [ -f "$STYLE_SRC" ]; then
 	ln -sf "$STYLE_SRC" "$STYLE_DEST"

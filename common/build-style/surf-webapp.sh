@@ -15,17 +15,9 @@ do_install() {
 	local surf_args=""
 
 	# Handle JS
+	local surf_js_flag="-S"
 	if [ "${surf_webapp_js}" = "no" ]; then
-		surf_args="$surf_args -s"
-	else
-		surf_args="$surf_args -S" # Default yes
-	fi
-
-	# Handle Plugins
-	if [ "${surf_webapp_plugins}" = "yes" ]; then
-		surf_args="$surf_args -P"
-	else
-		surf_args="$surf_args -p" # Default no
+		surf_js_flag="-s"
 	fi
 
 	# 2. Wrapper Script
@@ -94,19 +86,19 @@ export XDG_CONFIG_HOME="$ISOLATED_CONFIG"
 # This avoids a hard dependency on any specific shell while preserving
 # the ability to intercept links (which requires spoofing argv[0]).
 if command -v bash >/dev/null 2>&1; then
-	exec bash -c "exec -a \"\$0\" surf -c \"\$1\" SURF_ARGS_PLACEHOLDER \"SURF_URL_PLACEHOLDER\"" "$0" "$PROFILE_DIR/cookies.txt"
+	exec bash -c 'exec -a "$0" surf -c "$1" "$2" "$3"' "$0" "$PROFILE_DIR/cookies.txt" "SURF_JS_FLAG_PLACEHOLDER" "SURF_URL_PLACEHOLDER"
 elif command -v zsh >/dev/null 2>&1; then
-	exec zsh -c "exec -a \"\$0\" surf -c \"\$1\" SURF_ARGS_PLACEHOLDER \"SURF_URL_PLACEHOLDER\"" "$0" "$PROFILE_DIR/cookies.txt"
+	exec zsh -c 'exec -a "$0" surf -c "$1" "$2" "$3"' "$0" "$PROFILE_DIR/cookies.txt" "SURF_JS_FLAG_PLACEHOLDER" "SURF_URL_PLACEHOLDER"
 else
 	# Fallback if neither bash nor zsh is found. Link interception will fail,
 	# but the webapp itself will still launch and remain isolated.
-	exec surf -c "$PROFILE_DIR/cookies.txt" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"
+	exec surf -c "$PROFILE_DIR/cookies.txt" "SURF_JS_FLAG_PLACEHOLDER" "SURF_URL_PLACEHOLDER"
 fi
 EOF
 
 	# Replace placeholders in the wrapper
 	sed -i -e "s|APP_ID_PLACEHOLDER|${app_id}|g" \
-	       -e "s|SURF_ARGS_PLACEHOLDER|${surf_args}|g" \
+	       -e "s|SURF_JS_FLAG_PLACEHOLDER|${surf_js_flag}|g" \
 	       -e "s|SURF_URL_PLACEHOLDER|${surf_webapp_url}|g" \
 	       "${DESTDIR}/${wrapper_path}"
 

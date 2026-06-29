@@ -1,14 +1,13 @@
 # Template file for 'surf-app-whatsapp'
 pkgname=surf-app-whatsapp
-version=1.0
-revision=4
+version=1.7
+revision=1
 build_style=surf-webapp
 
 surf_webapp_name="WhatsApp"
 surf_webapp_url="https://web.whatsapp.com/"
 surf_webapp_icon="whatsapp"
 surf_webapp_js="yes"
-surf_webapp_plugins="no"
 
 depends="surf desktop-file-utils"
 short_desc="WhatsApp webapp profile running on isolated surf browser"

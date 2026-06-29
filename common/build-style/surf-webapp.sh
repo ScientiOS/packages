@@ -94,9 +94,9 @@ export XDG_CONFIG_HOME="$ISOLATED_CONFIG"
 # This avoids a hard dependency on any specific shell while preserving
 # the ability to intercept links (which requires spoofing argv[0]).
 if command -v bash >/dev/null 2>&1; then
-	exec bash -c 'exec -a "$0" surf -c "$1" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"' "$0" "$PROFILE_DIR/cookies.txt"
+	exec bash -c "exec -a \"\$0\" surf -c \"\$1\" SURF_ARGS_PLACEHOLDER \"SURF_URL_PLACEHOLDER\"" "$0" "$PROFILE_DIR/cookies.txt"
 elif command -v zsh >/dev/null 2>&1; then
-	exec zsh -c 'exec -a "$0" surf -c "$1" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"' "$0" "$PROFILE_DIR/cookies.txt"
+	exec zsh -c "exec -a \"\$0\" surf -c \"\$1\" SURF_ARGS_PLACEHOLDER \"SURF_URL_PLACEHOLDER\"" "$0" "$PROFILE_DIR/cookies.txt"
 else
 	# Fallback if neither bash nor zsh is found. Link interception will fail,
 	# but the webapp itself will still launch and remain isolated.

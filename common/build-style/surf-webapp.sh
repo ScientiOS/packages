@@ -33,7 +33,7 @@ do_install() {
 	local wrapper_path="usr/libexec/surf-apps/${app_id}"
 
 	cat <<'EOF' > "${DESTDIR}/${wrapper_path}"
-#!/bin/sh
+#!/bin/bash
 
 # --- PHASE 1: LINK INTERCEPTION ---
 if [ "$#" -gt 0 ]; then
@@ -80,14 +80,19 @@ else
 	rm -f "$STYLE_DEST"
 fi
 
-exec -a "$0" env \
-	REAL_XDG_DATA_HOME="$XDG_DATA_HOME" \
-	REAL_XDG_CACHE_HOME="$XDG_CACHE_HOME" \
-	REAL_XDG_CONFIG_HOME="$XDG_CONFIG_HOME" \
-	XDG_DATA_HOME="$ISOLATED_DATA" \
-	XDG_CACHE_HOME="$ISOLATED_CACHE" \
-	XDG_CONFIG_HOME="$ISOLATED_CONFIG" \
-	surf -c "$PROFILE_DIR/cookies.txt" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"
+# Export original variables so Phase 1 can restore them if a link is clicked
+export REAL_XDG_DATA_HOME="$XDG_DATA_HOME"
+export REAL_XDG_CACHE_HOME="$XDG_CACHE_HOME"
+export REAL_XDG_CONFIG_HOME="$XDG_CONFIG_HOME"
+
+# Set the isolated paths for this surf instance
+export XDG_DATA_HOME="$ISOLATED_DATA"
+export XDG_CACHE_HOME="$ISOLATED_CACHE"
+export XDG_CONFIG_HOME="$ISOLATED_CONFIG"
+
+# We must use bash's 'exec -a' directly instead of routing through 'env',
+# because 'env' does not preserve the argv[0] override.
+exec -a "$0" surf -c "$PROFILE_DIR/cookies.txt" SURF_ARGS_PLACEHOLDER "SURF_URL_PLACEHOLDER"
 EOF
 
 	# Replace placeholders in the wrapper

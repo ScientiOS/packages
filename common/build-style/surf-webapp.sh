@@ -30,6 +30,10 @@ do_install() {
 # --- PHASE 1: LINK INTERCEPTION ---
 if [ "$#" -gt 0 ]; then
 	# 1. Restore the original XDG variables if they were saved
+	if [ -n "$REAL_HOME" ]; then
+		export HOME="$REAL_HOME"
+	fi
+
 	if [ -n "$REAL_XDG_DATA_HOME" ]; then
 		export XDG_DATA_HOME="$REAL_XDG_DATA_HOME"
 	else
@@ -48,7 +52,7 @@ if [ "$#" -gt 0 ]; then
 		unset XDG_CONFIG_HOME
 	fi
 	
-	unset REAL_XDG_DATA_HOME REAL_XDG_CACHE_HOME REAL_XDG_CONFIG_HOME
+	unset REAL_HOME REAL_XDG_DATA_HOME REAL_XDG_CACHE_HOME REAL_XDG_CONFIG_HOME
 
 	# 2. Extract the last argument and open in default browser
 	for url in "$@"; do :; done
@@ -73,11 +77,14 @@ else
 fi
 
 # Export original variables so Phase 1 can restore them if a link is clicked
+export REAL_HOME="$HOME"
 export REAL_XDG_DATA_HOME="$XDG_DATA_HOME"
 export REAL_XDG_CACHE_HOME="$XDG_CACHE_HOME"
 export REAL_XDG_CONFIG_HOME="$XDG_CONFIG_HOME"
 
-# Set the isolated paths for this surf instance
+# Set the isolated paths for this surf instance.
+# surf hardcodes ~/.surf for many things, so we MUST override HOME.
+export HOME="$PROFILE_DIR"
 export XDG_DATA_HOME="$ISOLATED_DATA"
 export XDG_CACHE_HOME="$ISOLATED_CACHE"
 export XDG_CONFIG_HOME="$ISOLATED_CONFIG"

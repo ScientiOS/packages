@@ -46,7 +46,11 @@ jobs:
           sudo -Eu builder ./xbps-src binary-bootstrap
 
       - name: Inject custom packages
-        run: cp -r scientios-repo/srcpkgs/* void-packages/srcpkgs/
+        run: |
+          cp -r scientios-repo/srcpkgs/* void-packages/srcpkgs/
+          if [ -d "scientios-repo/common" ]; then
+            cp -r scientios-repo/common/* void-packages/common/
+          fi
 
       - name: Build custom packages
         run: |

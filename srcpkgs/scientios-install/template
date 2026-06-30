@@ -1,0 +1,16 @@
+# Template file for 'scientios-install'
+pkgname=scientios-install
+version=0.1.0
+revision=1
+build_style=go
+go_import_path="github.com/ScientiOS/installer"
+short_desc="ScientiOS Live Environment Installer"
+maintainer="ScientiOS Team <team@scientios.org>"
+license="MIT"
+homepage="https://github.com/ScientiOS/installer"
+
+# For local development without pushing to github, you can uncomment this block:
+# do_fetch() {
+# 	mkdir -p "${wrksrc}"
+# 	cp -r "${XBPS_BUILDDIR}/../../../installer/"* "${wrksrc}/"
+# }

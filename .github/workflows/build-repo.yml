@@ -38,7 +38,7 @@ jobs:
         with:
           repository: ScientiOS/installer
           path: "installer"
-          # token: ${{ secrets.PAT_TOKEN }} # Uncomment and set if the repo is private
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Clone void-packages
         run: |

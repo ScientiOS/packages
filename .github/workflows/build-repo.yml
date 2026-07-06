@@ -29,9 +29,16 @@ jobs:
           useradd -G xbuilder -M builder
 
       - name: Checkout custom packages
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           path: "scientios-repo"
+
+      - name: Checkout installer
+        uses: actions/checkout@v4
+        with:
+          repository: ScientiOS/installer
+          path: "installer"
+          # token: ${{ secrets.PAT_TOKEN }} # Uncomment and set if the repo is private
 
       - name: Clone void-packages
         run: |

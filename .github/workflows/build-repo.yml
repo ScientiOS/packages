@@ -58,6 +58,9 @@ jobs:
           if [ -d "scientios-repo/common" ]; then
             cp -r scientios-repo/common/* void-packages/common/
           fi
+          # Inject installer source directly into the srcpkgs tree
+          # so it is accessible inside the xbps-src chroot
+          cp -r installer void-packages/srcpkgs/scientios-install/installer-src
 
       - name: Build custom packages
         run: |

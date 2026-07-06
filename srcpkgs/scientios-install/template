@@ -12,5 +12,13 @@ homepage="https://github.com/ScientiOS/installer"
 # We fetch from the sibling directory cloned by GitHub Actions (or locally)
 do_fetch() {
 	mkdir -p "${wrksrc}"
-	cp -r "${XBPS_BUILDDIR}/../../../installer/"* "${wrksrc}/"
+	if [ -d "${XBPS_SRCPKGDIR}/${pkgname}/installer-src" ]; then
+		# CI environment: source was injected into the srcpkgs tree
+		cp -r "${XBPS_SRCPKGDIR}/${pkgname}/installer-src/"* "${wrksrc}/"
+	elif [ -d "${XBPS_BUILDDIR}/../../../installer" ]; then
+		# Local environment without chroot
+		cp -r "${XBPS_BUILDDIR}/../../../installer/"* "${wrksrc}/"
+	else
+		msg_error "Installer source not found. Inject it into srcpkgs/${pkgname}/installer-src before building.\n"
+	fi
 }

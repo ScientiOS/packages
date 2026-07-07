@@ -10,6 +10,7 @@ homepage="https://vm-curator.org/"
 distfiles="https://github.com/mroboff/vm-curator/archive/refs/tags/v${version}.tar.gz"
 checksum=11563411f9e174993879c81582cdc0864dc3f8646960f139b2690870562b5162
 
+hostmakedepends="pkg-config"
 makedepends="eudev-libudev-devel"
 depends="qemu bash edk2-ovmf polkit kmod"
 

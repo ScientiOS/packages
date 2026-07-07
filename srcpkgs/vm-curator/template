@@ -1,0 +1,18 @@
+# Template file for 'vm-curator'
+pkgname=vm-curator
+version=1.2.0
+revision=1
+build_style=cargo
+short_desc="A modern VM manager for Linux desktops that excels at GPU passthrough"
+maintainer="ScientiOS <admin@scientios.local>"
+license="MIT"
+homepage="https://vm-curator.org/"
+distfiles="https://github.com/mroboff/vm-curator/archive/refs/tags/v${version}.tar.gz"
+checksum=11563411f9e174993879c81582cdc0864dc3f8646960f139b2690870562b5162
+
+makedepends="eudev-libudev-devel"
+depends="qemu bash ovmf polkit kmod"
+
+post_install() {
+	vlicense LICENSE
+}

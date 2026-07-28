@@ -64,13 +64,25 @@ jobs:
 
       - name: Fetch existing repository
         run: |
-          mkdir -p void-packages/hostdir/binpkgs
-          # Use wget to mirror the existing GitHub Pages repository.
-          # Allow failure if the repository doesn't exist yet (404).
-          wget -r -np -nH --cut-dirs=1 https://scientios.github.io/packages/ -P void-packages/hostdir/binpkgs/ || true
+          mkdir -p void-packages/hostdir/binpkgs/nonfree
           
-          # Clean up any HTML files wget might have downloaded if the server returned a 404 page
-          find void-packages/hostdir/binpkgs -name "*.html" -type f -delete || true
+          # Iterate over packages and directly fetch the built .xbps files and their sigs
+          for pkg in scientios-repo/srcpkgs/*/; do
+            pkgname=$(basename "$pkg")
+            template_ver=$(grep -E "^version=" "$pkg/template" | cut -d= -f2 | tr -d '"'\''')
+            template_rev=$(grep -E "^revision=" "$pkg/template" | cut -d= -f2 | tr -d '"'\''')
+            target_pkgver="${pkgname}-${template_ver}_${template_rev}"
+            
+            # Check if package is nonfree
+            repo_path=""
+            if grep -q 'repository="nonfree"' "$pkg/template" || grep -q "repository='nonfree'" "$pkg/template"; then
+              repo_path="nonfree/"
+            fi
+            
+            echo "Attempting to fetch ${repo_path}${target_pkgver}.x86_64.xbps..."
+            wget -q -P void-packages/hostdir/binpkgs/${repo_path} https://scientios.github.io/packages/${repo_path}${target_pkgver}.x86_64.xbps || true
+            wget -q -P void-packages/hostdir/binpkgs/${repo_path} https://scientios.github.io/packages/${repo_path}${target_pkgver}.x86_64.xbps.sig || true
+          done
 
       - name: Build custom packages
         run: |
@@ -78,15 +90,18 @@ jobs:
           for pkg in ../scientios-repo/srcpkgs/*/; do
             pkgname=$(basename "$pkg")
             
-            # Extract version and revision
             template_ver=$(grep -E "^version=" "$pkg/template" | cut -d= -f2 | tr -d '"'\''')
             template_rev=$(grep -E "^revision=" "$pkg/template" | cut -d= -f2 | tr -d '"'\''')
             target_pkgver="${pkgname}-${template_ver}_${template_rev}"
             
+            repo_path=""
+            if grep -q 'repository="nonfree"' "$pkg/template" || grep -q "repository='nonfree'" "$pkg/template"; then
+              repo_path="nonfree/"
+            fi
+            
             echo "Checking $target_pkgver..."
             
-            # Check if this exact pkgver already exists in the downloaded repository
-            if [ -f "hostdir/binpkgs/${target_pkgver}.x86_64.xbps" ]; then
+            if [ -f "hostdir/binpkgs/${repo_path}${target_pkgver}.x86_64.xbps" ]; then
               echo "$target_pkgver is already built. Skipping."
             else
               echo "Building $target_pkgver..."

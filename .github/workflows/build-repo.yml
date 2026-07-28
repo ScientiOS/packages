@@ -25,7 +25,7 @@ jobs:
         run: |
           xbps-install -Syu xbps
           xbps-install -yu
-          xbps-install -y sudo bash grep curl git openssl xz
+          xbps-install -y sudo bash grep curl git openssl xz wget
           useradd -G xbuilder -M builder
 
       - name: Checkout custom packages
@@ -62,13 +62,36 @@ jobs:
           # so it is accessible inside the xbps-src chroot
           cp -r installer void-packages/srcpkgs/scientios-install/installer-src
 
+      - name: Fetch existing repository
+        run: |
+          mkdir -p void-packages/hostdir/binpkgs
+          # Use wget to mirror the existing GitHub Pages repository.
+          # Allow failure if the repository doesn't exist yet (404).
+          wget -r -np -nH --cut-dirs=1 https://scientios.github.io/packages/ -P void-packages/hostdir/binpkgs/ || true
+          
+          # Clean up any HTML files wget might have downloaded if the server returned a 404 page
+          find void-packages/hostdir/binpkgs -name "*.html" -type f -delete || true
+
       - name: Build custom packages
         run: |
           cd void-packages
           for pkg in ../scientios-repo/srcpkgs/*/; do
             pkgname=$(basename "$pkg")
-            echo "Building $pkgname..."
-            sudo -Eu builder ./xbps-src -A x86_64 pkg "$pkgname"
+            
+            # Extract version and revision
+            template_ver=$(grep -E "^version=" "$pkg/template" | cut -d= -f2 | tr -d '"'\''')
+            template_rev=$(grep -E "^revision=" "$pkg/template" | cut -d= -f2 | tr -d '"'\''')
+            target_pkgver="${pkgname}-${template_ver}_${template_rev}"
+            
+            echo "Checking $target_pkgver..."
+            
+            # Check if this exact pkgver already exists in the downloaded repository
+            if [ -f "hostdir/binpkgs/${target_pkgver}.x86_64.xbps" ]; then
+              echo "$target_pkgver is already built. Skipping."
+            else
+              echo "Building $target_pkgver..."
+              sudo -Eu builder ./xbps-src -A x86_64 pkg "$pkgname"
+            fi
           done
 
       - name: Setup Private Key

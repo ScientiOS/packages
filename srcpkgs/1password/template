@@ -1,0 +1,25 @@
+# Template file for '1password'
+pkgname=1password
+version=8.12.28
+revision=1
+archs="x86_64"
+depends="xdg-utils"
+short_desc="Password manager and secure wallet"
+maintainer="ScientiOS <admin@scientios.local>"
+license="custom:Proprietary"
+homepage="https://1password.com/"
+distfiles="https://downloads.1password.com/linux/debian/amd64/pool/main/1/1password/1password-${version}.amd64.deb"
+checksum=3f531f0b86969cbb04756d7bf3be48e84086721791e3e34779e845993d3185f8
+restricted=yes
+repository="nonfree"
+nopie=yes
+
+do_install() {
+	vcopy opt/1Password opt
+
+	vmkdir usr/bin
+	ln -s /opt/1Password/1password ${DESTDIR}/usr/bin/1password
+
+	vcopy usr/share/applications/1password.desktop usr/share/applications
+	vcopy usr/share/icons usr/share
+}

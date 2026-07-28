@@ -124,6 +124,9 @@ jobs:
           for dir in $(find $REPO_DIR -type d); do
             # Only generate index if there are .xbps files in this specific directory
             if ls $dir/*.xbps 1> /dev/null 2>&1; then
+              # Re-index all packages to ensure the x86_64-repodata file exists
+              xbps-rindex -a $dir/*.xbps
+              # Sign the newly generated index
               xbps-rindex --sign --signedby "ScientiOS" --privkey privkey.pem $dir
             fi
           done

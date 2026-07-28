@@ -1,7 +1,7 @@
 # Template file for 'slack-desktop'
 pkgname=slack-desktop
 version=4.51.180
-revision=1
+revision=2
 archs="x86_64"
 depends="xdg-utils"
 short_desc="Messaging app for teams"
@@ -21,6 +21,7 @@ do_install() {
 	vinstall usr/share/applications/slack.desktop 644 usr/share/applications
 	vinstall usr/share/pixmaps/slack.png 644 usr/share/pixmaps
 	
+	vmkdir usr/lib
 	vcopy usr/lib/slack usr/lib
 	
 	vmkdir usr/bin

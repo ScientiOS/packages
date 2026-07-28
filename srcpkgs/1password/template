@@ -20,6 +20,7 @@ do_install() {
 	vmkdir usr/bin
 	ln -s /opt/1Password/1password ${DESTDIR}/usr/bin/1password
 
-	vcopy usr/share/applications/1password.desktop usr/share/applications
+	vinstall usr/share/applications/1password.desktop 644 usr/share/applications
+	vmkdir usr/share
 	vcopy usr/share/icons usr/share
 }

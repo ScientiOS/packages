@@ -29,12 +29,12 @@ jobs:
           useradd -G xbuilder -M builder
 
       - name: Checkout custom packages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: "scientios-repo"
 
       - name: Checkout installer
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ScientiOS/installer
           path: "installer"

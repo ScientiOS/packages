@@ -83,6 +83,8 @@ jobs:
             wget -q -P void-packages/hostdir/binpkgs/${repo_path} https://scientios.github.io/packages/${repo_path}${target_pkgver}.x86_64.xbps || true
             wget -q -P void-packages/hostdir/binpkgs/${repo_path} https://scientios.github.io/packages/${repo_path}${target_pkgver}.x86_64.xbps.sig || true
           done
+          
+          chown -R builder:builder void-packages/hostdir/binpkgs
 
       - name: Build custom packages
         run: |

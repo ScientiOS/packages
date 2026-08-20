@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -s "https://ziglang.org/download/index.json" | jq -r 'keys[]' | grep -v 'master' | sort -V | tail -n1

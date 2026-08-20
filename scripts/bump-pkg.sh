@@ -39,7 +39,9 @@ echo "New version: $NEW_VERSION"
 
 if [ "$CURRENT_VERSION" = "$NEW_VERSION" ]; then
     echo "Package $PKG is up to date"
-    echo "BUMPED=false" >> "$GITHUB_ENV"
+    if [ -n "$GITHUB_ENV" ]; then
+        echo "BUMPED=false" >> "$GITHUB_ENV"
+    fi
     exit 0
 fi
 
@@ -49,7 +51,9 @@ OLDER_VERSION=$(printf "%s\n%s" "$CURRENT_VERSION" "$NEW_VERSION" | sort -V | he
 
 if [ "$OLDER_VERSION" != "$CURRENT_VERSION" ]; then
     echo "Current version ($CURRENT_VERSION) is newer than upstream ($NEW_VERSION)? Ignoring."
-    echo "BUMPED=false" >> "$GITHUB_ENV"
+    if [ -n "$GITHUB_ENV" ]; then
+        echo "BUMPED=false" >> "$GITHUB_ENV"
+    fi
     exit 0
 fi
 

@@ -1,0 +1,17 @@
+#!/bin/bash
+ZIG_VERSION=$(grep '^version=' srcpkgs/zig/template 2>/dev/null | cut -d= -f2 | tr -d '"')
+
+if [ -z "$ZIG_VERSION" ]; then
+    # Fallback to latest stable zig version if template not found
+    ZIG_VERSION=$(curl -s "https://ziglang.org/download/index.json" | jq -r 'keys[]' | grep -v 'master' | sort -V | tail -n1)
+fi
+
+# Fetch zls versions and check if matching ZIG_VERSION is released
+ZLS_VERSIONS=$(curl -s "https://builds.zigtools.org/index.json" | jq -r 'keys[]' | grep -v 'master')
+
+if echo "$ZLS_VERSIONS" | grep -qx "$ZIG_VERSION"; then
+    echo "$ZIG_VERSION"
+else
+    # Pick highest version available that does not exceed ZIG_VERSION
+    printf "%s\n%s\n" "$ZLS_VERSIONS" "$ZIG_VERSION" | sort -V | grep -B 1000 -x "$ZIG_VERSION" | grep -v -x "$ZIG_VERSION" | tail -n1
+fi

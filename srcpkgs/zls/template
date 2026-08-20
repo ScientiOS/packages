@@ -1,0 +1,23 @@
+# Template file for 'zls'
+pkgname=zls
+version=0.16.0
+revision=1
+archs="x86_64"
+create_wrksrc=yes
+depends="zig>=${version}"
+short_desc="Zig Language Server"
+maintainer="ScientiOS <admin@scientios.local>"
+license="MIT"
+homepage="https://zigtools.org/zls/"
+distfiles="https://builds.zigtools.org/zls-x86_64-linux-${version}.tar.xz"
+checksum=ded6d562a0b86ee878b1ddf70ffab2797ce3cdca3b02d6077548f9d56dff96b6
+
+do_build() {
+	:
+}
+
+do_install() {
+	vbin zls
+	vlicense LICENSE
+	vdoc README.md
+}

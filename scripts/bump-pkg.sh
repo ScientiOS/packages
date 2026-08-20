@@ -106,6 +106,12 @@ sed -i "s/^checksum=.*/checksum=$NEW_CHECKSUM/" "$TEMPLATE_FILE"
 rm -rf "$TEMP_DIR"
 
 echo "Successfully bumped $PKG to $NEW_VERSION"
+
+# When zig is bumped, synchronize zls to follow
+if [ "$PKG" = "zig" ] && [ -d "srcpkgs/zls" ]; then
+    echo "Zig package was bumped; synchronizing zls..."
+    "$0" zls
+fi
 # Export variables for GitHub Actions
 if [ -n "$GITHUB_ENV" ]; then
     echo "BUMPED=true" >> "$GITHUB_ENV"

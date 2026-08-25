@@ -1,0 +1,21 @@
+# Template file for 'glab-tui'
+pkgname=glab-tui
+version=0.8.4
+revision=1
+archs="x86_64"
+create_wrksrc=yes
+depends="git"
+short_desc="Terminal user interface (TUI) for GitLab and GitHub"
+maintainer="ScientiOS <admin@scientios.local>"
+license="MIT"
+homepage="https://github.com/rcieri/glab-tui"
+distfiles="https://github.com/rcieri/glab-tui/releases/download/v${version}/glab-tui-linux-amd64.tar.gz"
+checksum=aab65d481b333e230f574a9b66b2a78162088296074beeff25395139a9ccab59
+
+do_build() {
+	:
+}
+
+do_install() {
+	vbin glab-tui
+}

@@ -6,6 +6,7 @@ repository.
 ## Available Packages
 
 - [distrobox](distrobox.md) - Use any Linux distribution inside your terminal.
+- [glab-tui](glab-tui.md) - Terminal user interface (TUI) for GitLab and GitHub.
 - [slack-desktop](slack-desktop.md) - Messaging app for teams (Proprietary).
 
 ## Usage

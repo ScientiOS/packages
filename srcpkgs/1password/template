@@ -1,6 +1,6 @@
 # Template file for '1password'
 pkgname=1password
-version=8.12.32
+version=8.12.34
 revision=1
 archs="x86_64"
 depends="xdg-utils"
@@ -9,7 +9,7 @@ maintainer="ScientiOS <admin@scientios.local>"
 license="custom:Proprietary"
 homepage="https://1password.com/"
 distfiles="https://downloads.1password.com/linux/debian/amd64/pool/main/1/1password/1password-${version}.amd64.deb"
-checksum=9105a3052730eb327791e69ebe916575d2f5113c3d1df9f6c71f307d2c90994e
+checksum=25609b8b9e2d684d487c10957c0c012addc177d293dfc5a09469f7879afcefad
 restricted=yes
 repository="nonfree"
 nopie=yes

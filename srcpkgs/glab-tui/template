@@ -1,6 +1,6 @@
 # Template file for 'glab-tui'
 pkgname=glab-tui
-version=0.9.0
+version=0.9.1
 revision=1
 archs="x86_64"
 create_wrksrc=yes
@@ -10,7 +10,7 @@ maintainer="ScientiOS <admin@scientios.local>"
 license="MIT"
 homepage="https://github.com/rcieri/glab-tui"
 distfiles="https://github.com/rcieri/glab-tui/releases/download/v${version}/glab-tui-linux-amd64-musl.tar.gz"
-checksum=90a5f4af647bc6562390c016ae8fca211f8f2eeacd8614dbe15590b2cd93e73d
+checksum=4ea6ecbdcc4310e63539e8e75277866b1697ceefddd72cea2da5b47d26a97ef1
 
 do_build() {
 	:
